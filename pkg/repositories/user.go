@@ -10,7 +10,7 @@ import (
 var Users = make(map[string]models.User)
 
 func CreateUser(login string, password string) (int, error) {
-	user := models.User{
+	User := models.User{
 		Login:    login,
 		Password: password,
 	}
@@ -19,7 +19,7 @@ func CreateUser(login string, password string) (int, error) {
 		return 0, fmt.Errorf("password birnarse")
 	}
 
-	Users[user.Login] = user
+	Users[User.Login] = User
 
 	return len(Users), nil
 }
