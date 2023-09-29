@@ -7,10 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var inputData struct {
-	Name string  `json:"name"`
-	Cash float64 `json:"cash"`
-}
 var accounts []models.Account
 
 func GetAccounts(ctx *gin.Context) {
@@ -26,6 +22,11 @@ func GetAccounts(ctx *gin.Context) {
 }
 
 func CreateAccount(ctx *gin.Context) {
+	var inputData struct {
+		Name string  `json:"name"`
+		Cash float64 `json:"cash"`
+	}
+
 	if err := ctx.ShouldBindJSON(&inputData); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
