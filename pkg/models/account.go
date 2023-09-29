@@ -5,3 +5,9 @@ type Account struct {
 	Cash   float64 `json:"cash"`
 	UserId any     `json:"id"`
 }
+
+/*
+map := {
+	[accountName]: [accountCash]
+}
+*/

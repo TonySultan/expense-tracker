@@ -12,7 +12,7 @@ func main() {
 	r.POST("/registration", handlers.RegisterHandler)
 	r.POST("/login", handlers.LoginHandler)
 
-	r.GET("/accounts", handlers.GetAccounts)
+	r.GET("/accounts/:id", handlers.GetAccounts)
 	r.POST("/accounts", handlers.CreateAccount)
 
 	r.GET("/categories", handlers.GetCategories)

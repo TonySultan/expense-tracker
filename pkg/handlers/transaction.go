@@ -10,8 +10,8 @@ import (
 var transactions []models.Transaction
 
 func GetTransactions(ctx *gin.Context) {
-	userID, _ := ctx.Get("id")
-	userID = userID.(int)
+	userID, _ := ctx.Get("id") //
+	userID = userID.(int) // 
 
 	userTransactions := []models.Transaction{}
 
@@ -44,6 +44,7 @@ func CreateTransaction(ctx *gin.Context) {
 		AccountID  int     `json:"accountId"`
 		Amount     float64 `json:"amount"`
 		Comment    string  `json:"comment"`
+		// UserId    int  `json:"userId"`
 	}
 	var accountExists, categoryExists bool
 	var account models.Account
@@ -53,7 +54,7 @@ func CreateTransaction(ctx *gin.Context) {
 		return
 	}
 
-	userID, _ := ctx.Get("id")
+	userID, _ := ctx.Get("id") 
 	userID = userID.(int)
 
 	for _, acc := range accounts {
