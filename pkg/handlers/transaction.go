@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/TonySultan/expense-tracker/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -10,21 +11,25 @@ import (
 var transactions []models.Transaction
 
 func GetTransactions(ctx *gin.Context) {
-	userID, _ := ctx.Get("id") //
-	userID = userID.(int) // 
+	userID := ctx.Param("id")
+	intID, err := strconv.Atoi(userID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	userTransactions := []models.Transaction{}
 
 	for _, transaction := range transactions {
 		var accountExists, categoryExists bool
 		for _, acc := range accounts {
-			if acc.UserId == transaction.AccountID && acc.UserId == userID {
+			if acc.UserId == transaction.AccountID && acc.UserId == intID {
 				accountExists = true
 				break
 			}
 		}
 		for _, cat := range categories {
-			if cat.UserId == transaction.CategoryID && cat.UserId == userID {
+			if cat.UserId == transaction.CategoryID && cat.UserId == intID {
 				categoryExists = true
 				break
 			}
@@ -44,7 +49,7 @@ func CreateTransaction(ctx *gin.Context) {
 		AccountID  int     `json:"accountId"`
 		Amount     float64 `json:"amount"`
 		Comment    string  `json:"comment"`
-		// UserId    int  `json:"userId"`
+		UserId     int     `json:"userId"`
 	}
 	var accountExists, categoryExists bool
 	var account models.Account
@@ -54,11 +59,10 @@ func CreateTransaction(ctx *gin.Context) {
 		return
 	}
 
-	userID, _ := ctx.Get("id") 
-	userID = userID.(int)
+	userID := &inputData.UserId
 
 	for _, acc := range accounts {
-		if acc.UserId == inputData.AccountID && acc.UserId == userID {
+		if acc.UserId == inputData.AccountID && acc.UserId == *userID {
 			accountExists = true
 			account = acc
 			break
@@ -66,7 +70,7 @@ func CreateTransaction(ctx *gin.Context) {
 	}
 
 	for _, cat := range categories {
-		if cat.UserId == inputData.CategoryID && cat.UserId == userID {
+		if cat.UserId == inputData.CategoryID && cat.UserId == *userID {
 			categoryExists = true
 			break
 		}

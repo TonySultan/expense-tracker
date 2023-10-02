@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/TonySultan/expense-tracker/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -10,12 +11,16 @@ import (
 var categories []models.Category
 
 func GetCategories(ctx *gin.Context) {
-	userID, _ := ctx.Get("id")
-	userID = userID.(int)
+	userID := ctx.Param("id")
+	intID, err := strconv.Atoi(userID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	userCategories := []models.Category{}
 
 	for _, category := range categories {
-		if category.UserId == userID {
+		if category.UserId == intID {
 			userCategories = append(userCategories, category)
 		}
 	}
@@ -25,8 +30,9 @@ func GetCategories(ctx *gin.Context) {
 func CreateCategory(ctx *gin.Context) {
 
 	var inputData struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
+		Name   string `json:"name"`
+		Type   string `json:"type"`
+		UserId int
 	}
 
 	if err := ctx.ShouldBindJSON(&inputData); err != nil {
@@ -34,13 +40,12 @@ func CreateCategory(ctx *gin.Context) {
 		return
 	}
 
-	userID, _ := ctx.Get("id")
-	userID = userID.(int)
+	userID := &inputData.UserId
 
 	newCategory := models.Category{
 		Name:   inputData.Name,
 		Type:   inputData.Type,
-		UserId: userID,
+		UserId: *userID,
 	}
 
 	categories = append(categories, newCategory)
